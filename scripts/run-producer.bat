@@ -1,0 +1,1 @@
+java -jar target\artemis-1.0-SNAPSHOT-jar-with-dependencies.jar --produce tcp://localhost:61616 DeferQueue
