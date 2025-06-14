@@ -1,1 +1,1 @@
-java -jar target\artemis-1.0-SNAPSHOT-jar-with-dependencies.jar --consume tcp://localhost:61616 ExpiryQueue
+java -jar target\artemis-1.0-SNAPSHOT-jar-with-dependencies.jar --serviceToStart=consumer --artemis.queue=ExpiryQueue

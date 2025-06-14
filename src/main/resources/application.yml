@@ -1,0 +1,7 @@
+spring:
+  main:
+    web-application-type: NONE
+artemis:
+  url: tcp://localhost:61616
+  username: artemis
+  password: artemis

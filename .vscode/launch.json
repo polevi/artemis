@@ -9,14 +9,6 @@
             "name": "App",
             "request": "launch",
             "mainClass": "com.mycompany.app.App",
-            "projectName": "my-app",
-            "args": "--produce tcp://localhost:61616 test"
-        },
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "com.mycompany.app.App",
             "projectName": "artemis",
             "args": "--produce tcp://localhost:61616 test"
         }
