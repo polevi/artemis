@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
- import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mycompany.app.ArtemisProperties;
@@ -29,7 +29,7 @@ public class Consumer implements ServiceRunner {
         log.info("Address: {}", artemisProperties.getQueue());
 
         Connection connection = null;
-        try (ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory()) {
+        try (ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(artemisProperties.getUrl())) {
             connection = connectionFactory.createConnection(artemisProperties.getUsername(), artemisProperties.getPassword());
             connection.start();
     

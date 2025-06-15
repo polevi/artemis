@@ -1,0 +1,38 @@
+services:
+
+    artemis-service:
+        image:  apache/activemq-artemis:latest-alpine
+        ports:
+            - "61616:61616"
+        healthcheck:
+            test: ["CMD", "./bin/artemis", "check", "node", "--user=artemis", "--password=artemis"]
+            start_period: 10s
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    consumer-service:
+        build: .
+        depends_on:
+            artemis-service:
+                condition: service_healthy
+        environment:
+            - serviceToStart=consumer
+            - artemis.url=tcp://artemis-service:61616
+            - artemis.username=artemis
+            - artemis.password=artemis
+            - artemis.queue=ExpiryQueue
+
+    producer-service:
+        build: .
+        depends_on:
+            artemis-service:
+                condition: service_healthy
+        environment:
+            - serviceToStart=producer
+            - artemis.url=tcp://artemis-service:61616
+            - artemis.username=artemis
+            - artemis.password=artemis
+            - artemis.queue=DeferQueue
+
+

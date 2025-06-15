@@ -29,7 +29,7 @@ public class Producer implements ServiceRunner {
         log.info("Address: {}", artemisProperties.getQueue());
 
         Connection connection = null;
-        try (ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory()) {
+        try (ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(artemisProperties.getUrl())) {
             connection = connectionFactory.createConnection(artemisProperties.getUsername(), artemisProperties.getPassword());
             connection.start();
     
