@@ -7,5 +7,5 @@ RUN mvn compile assembly:single
 
 FROM eclipse-temurin:23-jdk-alpine
 WORKDIR /app
-COPY --from=build /app/target/*.jar .
-CMD ["java", "-jar", "artemis-1.0-SNAPSHOT-jar-with-dependencies.jar"]
+COPY --from=build /app/target/*.jar app.jar
+CMD ["java", "-jar", "app.jar"]
