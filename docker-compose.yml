@@ -12,7 +12,7 @@ services:
             retries: 5
 
     consumer-service:
-        build: .
+        build: ./mq
         depends_on:
             artemis-service:
                 condition: service_healthy
@@ -24,7 +24,7 @@ services:
             - artemis.queue=ExpiryQueue
 
     producer-service:
-        build: .
+        build: ./mq
         depends_on:
             artemis-service:
                 condition: service_healthy
