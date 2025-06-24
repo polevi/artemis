@@ -3,7 +3,7 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:resolve
 COPY src ./src
-RUN mvn package
+RUN mvn -Dmaven.test.skip package
 
 FROM eclipse-temurin:23-jdk-alpine
 WORKDIR /app

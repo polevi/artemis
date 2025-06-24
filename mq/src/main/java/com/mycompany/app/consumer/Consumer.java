@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.mycompany.app.ArtemisProperties;
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
+import com.mycompany.app.swiftmt.SwiftMTHelper;
 
 @Service("consumer")
 @Slf4j
@@ -20,6 +21,9 @@ public class Consumer implements ServiceRunner {
 
     @Autowired
     ArtemisProperties artemisProperties;
+
+    @Autowired
+    SwiftMTHelper swiftMTHelper;    
 
     @Override
     public void run() throws Exception {
@@ -42,7 +46,9 @@ public class Consumer implements ServiceRunner {
             while(!shutdownHook.isTerminating()) {
                 Message message = consumer.receive();
                 if (message instanceof TextMessage) {
-                    log.info(((TextMessage)message).getText());
+                    String msg = ((TextMessage)message).getText();
+                    int n = swiftMTHelper.parseMessageId(msg);
+                    log.info("Message {} has been received successfully.", n); 
                 }
             }
         }
