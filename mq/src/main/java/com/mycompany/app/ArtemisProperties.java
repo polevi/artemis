@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import lombok.*;
 
 @Configuration
-@ConfigurationProperties(prefix = "artemis")
+@ConfigurationProperties(prefix = "app.artemis")
 @ConfigurationPropertiesScan
 @Getter @Setter
 public class ArtemisProperties {

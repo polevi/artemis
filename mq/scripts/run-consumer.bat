@@ -1,1 +1,1 @@
-java -jar target\artemis-1.0-SNAPSHOT-jar-with-dependencies.jar --serviceToStart=consumer --artemis.queue=ExpiryQueue
+java -jar target\artemis-1.0-SNAPSHOT.jar --app.serviceToStart=consumer --app.artemis.queue=DeferQueue

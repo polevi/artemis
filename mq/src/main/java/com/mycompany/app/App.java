@@ -16,7 +16,7 @@ public class App implements CommandLineRunner {
     @Autowired
     private ApplicationContext context;
 
-    @Value("${serviceToStart}")
+    @Value("${app.serviceToStart}")
     private String serviceToStart;
 
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class App implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("App started.. Looking for service '{}' ..", serviceToStart);
-        ServiceRunner service = (ServiceRunner)context.getBean(serviceToStart);
+        ServiceRunner service = context.getBean(serviceToStart, ServiceRunner.class);
         if (service != null)
             service.run();
     }

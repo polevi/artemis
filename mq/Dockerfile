@@ -3,7 +3,7 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:resolve
 COPY src ./src
-RUN mvn compile assembly:single
+RUN mvn package
 
 FROM eclipse-temurin:23-jdk-alpine
 WORKDIR /app

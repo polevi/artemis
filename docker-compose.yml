@@ -1,5 +1,29 @@
 services:
 
+    postgres-service:
+        image: postgres
+        ports:
+            - "5432:5432"        
+        environment:
+            POSTGRES_PASSWORD: postgres
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5   
+
+
+    db-service:
+        build: ./db
+        depends_on:
+            postgres-service:
+                condition: service_healthy
+        environment:
+            - spring.datasource.url=jdbc:postgresql://postgres-service:5432/postgres
+            - spring.datasource.username=postgres
+            - spring.datasource.password=postgres
+
+
     artemis-service:
         image:  apache/activemq-artemis:latest-alpine
         ports:
@@ -17,11 +41,11 @@ services:
             artemis-service:
                 condition: service_healthy
         environment:
-            - serviceToStart=consumer
-            - artemis.url=tcp://artemis-service:61616
-            - artemis.username=artemis
-            - artemis.password=artemis
-            - artemis.queue=ExpiryQueue
+            - app.serviceToStart=consumer
+            - app.artemis.url=tcp://artemis-service:61616
+            - app.artemis.username=artemis
+            - app.artemis.password=artemis
+            - app.artemis.queue=ExpiryQueue
 
     producer-service:
         build: ./mq
@@ -29,10 +53,10 @@ services:
             artemis-service:
                 condition: service_healthy
         environment:
-            - serviceToStart=producer
-            - artemis.url=tcp://artemis-service:61616
-            - artemis.username=artemis
-            - artemis.password=artemis
-            - artemis.queue=DeferQueue
+            - app.serviceToStart=producer
+            - app.artemis.url=tcp://artemis-service:61616
+            - app.artemis.username=artemis
+            - app.artemis.password=artemis
+            - app.artemis.queue=DeferQueue
 
 
