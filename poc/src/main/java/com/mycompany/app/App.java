@@ -1,11 +1,13 @@
 package com.mycompany.app;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class App implements CommandLineRunner {
 
     @Autowired
-    private ApplicationContext context;
-
-    @Value("${app.serviceToStart}")
-    private String serviceToStart;
+    private RawDataRepository rawDataRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
@@ -25,7 +24,14 @@ public class App implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("App started.. Looking for service '{}' ..", serviceToStart);
-        context.getBean(serviceToStart, ServiceRunner.class).run();
+        List<Object[]> list = new ArrayList<Object[]>();
+
+        for (int i = 0; i < 10; i++) {
+            list.add(new Object[] { i, LocalDate.now(), "Hello world" + i });
+        }
+        
+        list.add(new Object[] { 0, LocalDate.now(), "aaaaaa" });
+
+        rawDataRepository.insertBatch(list);
     }
 }

@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "com.mycompany.app.App",
             "projectName": "artemis",
-            "args": "--app.serviceToStart=producer --app.artemis.queue=ExpiryQueue"
+            "args": "--app.serviceToStart=consumer --app.artemis.queue=ExpiryQueue"
         }
     ]
 }
