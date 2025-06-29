@@ -34,21 +34,20 @@ public class Producer implements ServiceRunner {
     public void run() throws Exception {
         log.info("Producer started");
 
-        try (Connection connection = artemisConnectionFactory.createConnection()) {
-            connection.start();
+        try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.AUTO_ACKNOWLEDGE)) {
+            context.start();
     
-            Session session = connection.createSession(Session.AUTO_ACKNOWLEDGE);
-            Queue queue = session.createQueue(artemisProperties.getQueue());
+            Queue queue = context.createQueue(artemisProperties.getQueue());
 
-            MessageProducer producer = session.createProducer(queue);
+            JMSProducer producer = context.createProducer();
             producer.setTimeToLive(30000);
 
             log.info("Start producing messages to address: {}", artemisProperties.getQueue());
 
             int n = 0;
-            while(!shutdownHook.isTerminating()) {
-                TextMessage message = session.createTextMessage(swiftMTHelper.createMT103(n));
-                producer.send(message);
+            while(!Thread.currentThread().isInterrupted()) {
+                TextMessage message = context.createTextMessage(swiftMTHelper.createMT103(n));
+                producer.send(queue, message);
 
                 if (n % artemisProperties.getBatchSize() == 0) {
                     log.info("Batch of {} messages has been sent successfully.", artemisProperties.getBatchSize());  
@@ -56,10 +55,8 @@ public class Producer implements ServiceRunner {
 
                 n++;
             }
-        }
-        catch(JMSException e) {
-            log.error("JMS Exception", e);
+
+            log.info("Producer stopped..");
         }
     }   
-
 }

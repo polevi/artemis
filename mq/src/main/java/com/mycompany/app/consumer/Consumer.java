@@ -49,7 +49,7 @@ public class Consumer implements ServiceRunner {
 
             log.info("Start receiving messages from address: {}", artemisProperties.getQueue());
 
-            while(!shutdownHook.isTerminating()) {
+            while(!Thread.currentThread().isInterrupted()) {
 
                 ArrayList<Object[]> list = new ArrayList<Object[]>();
 
