@@ -3,6 +3,8 @@ package com.mycompany.app.producer;
 import jakarta.jms.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.mycompany.app.ArtemisConfig;
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
+import com.mycompany.app.messages.SwiftMTMessage;
 import com.mycompany.app.swiftmt.SwiftMTHelper;
 
 @Service("producer")
@@ -40,13 +43,15 @@ public class Producer implements ServiceRunner {
             Queue queue = context.createQueue(artemisProperties.getQueue());
 
             JMSProducer producer = context.createProducer();
-            producer.setTimeToLive(30000);
+            //producer.setTimeToLive(30000);
+            producer.setDeliveryDelay(5000);
 
             log.info("Start producing messages to address: {}", artemisProperties.getQueue());
 
             int n = 0;
             while(!Thread.currentThread().isInterrupted()) {
-                TextMessage message = context.createTextMessage(swiftMTHelper.createMT103(n));
+                SwiftMTMessage msg = new SwiftMTMessage(n, LocalDate.now(), swiftMTHelper.createMT103(n));
+                ObjectMessage message = context.createObjectMessage(msg);
                 producer.send(queue, message);
 
                 if (n % artemisProperties.getBatchSize() == 0) {

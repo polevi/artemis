@@ -3,7 +3,6 @@ package com.mycompany.app.consumer;
 import jakarta.jms.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.mycompany.app.ArtemisConfig;
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
+import com.mycompany.app.messages.SwiftMTMessage;
 import com.mycompany.app.swiftmt.SwiftMTHelper;
 
 @Service("consumer")
@@ -43,22 +43,25 @@ public class Consumer implements ServiceRunner {
         try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {            
             context.start();
     
-            Queue queue = context.createQueue(artemisProperties.getQueue());
-            JMSConsumer consumer = context.createConsumer(queue);
+            Queue recvQueue = context.createQueue(artemisProperties.getQueue());
+            Queue replyQueue = context.createQueue("ack");
+            JMSConsumer consumer = context.createConsumer(recvQueue);
+            JMSProducer producer = context.createProducer();
 
             log.info("Start receiving messages from address: {}", artemisProperties.getQueue());
 
             while(!Thread.currentThread().isInterrupted()) {
 
-                ArrayList<Object[]> list = new ArrayList<Object[]>();
+                ArrayList<SwiftMTMessage> list = new ArrayList<SwiftMTMessage>();
 
                 for(int i = 0; i < artemisProperties.getBatchSize(); i++) {
 
                     Message message = consumer.receive();
-                    if (message != null) {
-                        String msg = ((TextMessage)message).getText();
-                        int id = swiftMTHelper.parseMessageId(msg);
-                        list.add(new Object[] { id, LocalDate.now(), msg });
+                    if (message == null)
+                        break;
+                    if (message instanceof ObjectMessage) {
+                        SwiftMTMessage msg = (SwiftMTMessage)((ObjectMessage)message).getObject();
+                        list.add(msg);
                     } else {
                         break;
                     }
@@ -68,6 +71,10 @@ public class Consumer implements ServiceRunner {
                     try {
                         rawDataRepository.insertBatch(list);
                         log.info("Inserted batch of {} records", list.size());
+
+                        Message replyMessage = context.createMessage();
+                        producer.send(replyQueue, replyMessage);
+                        log.info("Ack sent");
                     } catch(Exception e) {
                         log.error(e.getMessage());
                     }
