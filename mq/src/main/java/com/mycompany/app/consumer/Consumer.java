@@ -40,12 +40,11 @@ public class Consumer implements ServiceRunner {
     public void run() throws Exception {
         log.info("Consumer started");
         
-        try (Connection connection = artemisConnectionFactory.createConnection()) {            
-            connection.start();
+        try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {            
+            context.start();
     
-            Session session = connection.createSession(Session.SESSION_TRANSACTED);
-            Queue queue = session.createQueue(artemisProperties.getQueue());
-            MessageConsumer consumer = session.createConsumer(queue);
+            Queue queue = context.createQueue(artemisProperties.getQueue());
+            JMSConsumer consumer = context.createConsumer(queue);
 
             log.info("Start receiving messages from address: {}", artemisProperties.getQueue());
 
@@ -72,12 +71,9 @@ public class Consumer implements ServiceRunner {
                     } catch(Exception e) {
                         log.error(e.getMessage());
                     }
-                    session.commit();
+                    context.commit();
                 }                
             }
-        }
-        catch(JMSException e) {
-            log.error("JMS exception", e);
         }
     }   
 }
