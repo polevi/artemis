@@ -1,4 +1,6 @@
 spring:
+  main:
+    lazy-initialization: true
   datasource:
     type: "org.springframework.jdbc.datasource.SimpleDriverDataSource"
     driver-class-name: org.postgresql.Driver
@@ -11,4 +13,3 @@ app:
     username: artemis
     password: artemis
     batchsize: 1000
-

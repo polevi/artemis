@@ -1,0 +1,1 @@
+docker-compose -f docker-compose-postgres-with-artemis.yml up

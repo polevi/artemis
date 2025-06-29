@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,10 @@ public class Producer implements ServiceRunner {
 
     @Override
     @Async("threadPoolTaskExecutor")
+    @Retryable(value = RuntimeException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 5000), listeners = {"retryListener"})
     public void run() throws Exception {
         log.info("Producer started");
-
+        
         try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.AUTO_ACKNOWLEDGE)) {
             context.start();
     

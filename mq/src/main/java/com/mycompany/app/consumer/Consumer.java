@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,7 @@ public class Consumer implements ServiceRunner {
 
     @Override
     @Async("threadPoolTaskExecutor")
+    @Retryable(value = RuntimeException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 5000), listeners = {"retryListener"})
     public void run() throws Exception {
         log.info("Consumer started");
         
@@ -81,7 +84,6 @@ public class Consumer implements ServiceRunner {
                     context.commit();
                 }                
             }
-        }
-        System.out.println("Consumer stoppped");
+        }   
     }   
 }
