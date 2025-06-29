@@ -63,8 +63,7 @@ public class Consumer implements ServiceRunner {
                     if (message == null)
                         break;
                     if (message instanceof ObjectMessage) {
-                        SwiftMTMessage msg = (SwiftMTMessage)((ObjectMessage)message).getObject();
-                        list.add(msg);
+                        list.add(message.getBody(SwiftMTMessage.class));
                     } else {
                         break;
                     }
