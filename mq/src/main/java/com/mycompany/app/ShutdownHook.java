@@ -4,7 +4,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ShutdownHook implements DisposableBean{
+public class ShutdownHook implements DisposableBean {
 
     private boolean isTerminating = false;
 
@@ -12,7 +12,7 @@ public class ShutdownHook implements DisposableBean{
     public void destroy() throws Exception {
         System.out.println("Halted abruptly, terminating gracefully..");
         isTerminating = true;
-        Thread.sleep(5000);
+        //Thread.sleep(3000);
     }
 
     public boolean isTerminating() {

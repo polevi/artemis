@@ -1,4 +1,4 @@
-package com.mycompany.app;
+package com.mycompany.app.config;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,14 +8,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.scheduling.annotation.EnableAsync;
+
+import com.mycompany.app.CustomMessageConverter;
 
 import lombok.*;
 
 @Configuration
 @ConfigurationProperties(prefix = "app.artemis")
 @ConfigurationPropertiesScan
-@EnableAsync
 @Getter @Setter
 public class ArtemisConfig {
     private String url;

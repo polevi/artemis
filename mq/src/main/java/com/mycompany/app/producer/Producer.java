@@ -6,14 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDate;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.mycompany.app.ArtemisConfig;
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
+import com.mycompany.app.config.ArtemisConfig;
 import com.mycompany.app.messages.SwiftMTMessage;
 import com.mycompany.app.swiftmt.SwiftMTHelper;
 
@@ -33,7 +32,7 @@ public class Producer implements ServiceRunner {
     ActiveMQConnectionFactory artemisConnectionFactory;       
 
     @Override
-    @Async
+    @Async("threadPoolTaskExecutor")
     public void run() throws Exception {
         log.info("Producer started");
 
@@ -49,7 +48,7 @@ public class Producer implements ServiceRunner {
             log.info("Start producing messages to address: {}", artemisProperties.getQueue());
 
             int n = 0;
-            while(!Thread.currentThread().isInterrupted()) {
+            while(!shutdownHook.isTerminating()) {
                 SwiftMTMessage msg = new SwiftMTMessage(n, LocalDate.now(), swiftMTHelper.createMT103(n));
                 ObjectMessage message = context.createObjectMessage(msg);
                 producer.send(queue, message);
@@ -60,8 +59,6 @@ public class Producer implements ServiceRunner {
 
                 n++;
             }
-
-            log.info("Producer stopped..");
         }
-    }   
+    }  
 }

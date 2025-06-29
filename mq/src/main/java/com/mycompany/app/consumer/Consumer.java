@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.mycompany.app.ArtemisConfig;
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
+import com.mycompany.app.config.ArtemisConfig;
 import com.mycompany.app.messages.SwiftMTMessage;
 import com.mycompany.app.swiftmt.SwiftMTHelper;
 
@@ -36,7 +36,7 @@ public class Consumer implements ServiceRunner {
     ActiveMQConnectionFactory artemisConnectionFactory;    
 
     @Override
-    @Async
+    @Async("threadPoolTaskExecutor")
     public void run() throws Exception {
         log.info("Consumer started");
         
@@ -50,7 +50,7 @@ public class Consumer implements ServiceRunner {
 
             log.info("Start receiving messages from address: {}", artemisProperties.getQueue());
 
-            while(!Thread.currentThread().isInterrupted()) {
+            while(!shutdownHook.isTerminating()) {
 
                 ArrayList<SwiftMTMessage> list = new ArrayList<SwiftMTMessage>();
 
@@ -82,5 +82,6 @@ public class Consumer implements ServiceRunner {
                 }                
             }
         }
+        System.out.println("Consumer stoppped");
     }   
 }
