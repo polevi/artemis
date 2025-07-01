@@ -1,4 +1,4 @@
-package com.mycompany.app.config;
+package com.mycompany.app.configs;
 
 import java.util.concurrent.Executor;
 
@@ -16,6 +16,7 @@ public class SpringAsyncConfig {
     @Bean(name = "threadPoolTaskExecutor")
     public Executor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(4);
         executor.setAwaitTerminationSeconds(5);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();

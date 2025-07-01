@@ -8,8 +8,6 @@ import java.util.Random;
 
 public class SwiftMTHelperTest {
 
-    SwiftMTHelper helper = new SwiftMTHelper();
-
     @Test
     public void testParseMessageId() {
         Random random = new Random();

@@ -1,0 +1,10 @@
+spring:
+  main:
+    lazy-initialization: false   
+app:
+  artemis:
+    url: tcp://localhost:6161
+    username: artemis
+    password: artemis
+    batchsize: 1000
+    queue: RawData

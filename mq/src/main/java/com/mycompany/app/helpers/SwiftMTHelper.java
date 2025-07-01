@@ -1,4 +1,4 @@
-package com.mycompany.app.swiftmt;
+package com.mycompany.app.helpers;
 
 import org.springframework.stereotype.Component;
 
@@ -19,11 +19,11 @@ public class SwiftMTHelper {
         .append(":71A:SHA")
         .append("-}");
 
-    public String createMT103(int message_id) {
+    public static String createMT103(int message_id) {
         return mt103.toString().replace("REFERENCE12345", String.valueOf(message_id));
     }
 
-    public int parseMessageId(String mt) {
+    public static int parseMessageId(String mt) {
         int idx1 = mt.indexOf(":20:") + 4;
         int idx2 = mt.indexOf(":23B:");
         return Integer.parseInt(mt.substring(idx1, idx2));

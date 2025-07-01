@@ -1,4 +1,4 @@
-package com.mycompany.app.consumer;
+package com.mycompany.app.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -9,12 +9,13 @@ import java.util.List;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.app.messages.SwiftMTMessage;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
-@Transactional
+@Slf4j
 public class RawDataRepository {
 
     private JdbcTemplate jdbcTemplate;
@@ -23,6 +24,7 @@ public class RawDataRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+	//@Transactional(propagation = Propagation.REQUIRED)
     public int[] insertBatch(List<SwiftMTMessage> items) {
 		return this.jdbcTemplate.batchUpdate(
 				"insert into test.swift_mt (id, operdate, body) values(?, ?, ?) on conflict(id) do nothing",

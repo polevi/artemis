@@ -1,0 +1,1 @@
+java -jar target\artemis-1.0-SNAPSHOT.jar --app.artemis.queue=RawData --app.artemis.batchsize=1000

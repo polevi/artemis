@@ -15,9 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.mycompany.app.ServiceRunner;
 import com.mycompany.app.ShutdownHook;
-import com.mycompany.app.config.ArtemisConfig;
+import com.mycompany.app.configs.ArtemisConfig;
+import com.mycompany.app.dao.RawDataRepository;
+import com.mycompany.app.helpers.SwiftMTHelper;
 import com.mycompany.app.messages.SwiftMTMessage;
-import com.mycompany.app.swiftmt.SwiftMTHelper;
 
 @Service("consumer")
 @Slf4j

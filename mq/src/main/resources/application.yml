@@ -1,6 +1,6 @@
 spring:
   main:
-    lazy-initialization: true
+    lazy-initialization: false
   datasource:
     type: "org.springframework.jdbc.datasource.SimpleDriverDataSource"
     driver-class-name: org.postgresql.Driver

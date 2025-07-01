@@ -1,21 +1,23 @@
-package com.mycompany.app.config;
+package com.mycompany.app.configs;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
 
-import com.mycompany.app.CustomMessageConverter;
+import com.mycompany.app.converters.SwiftMTMessageConverter;
 
 import lombok.*;
 
 @Configuration
 @ConfigurationProperties(prefix = "app.artemis")
-@ConfigurationPropertiesScan
+@ComponentScan
+@EnableJms
 @Getter @Setter
 public class ArtemisConfig {
     private String url;
@@ -34,30 +36,20 @@ public class ArtemisConfig {
     }
 
     @Bean
+    public CachingConnectionFactory cachingConnectionFactory() {
+        return new CachingConnectionFactory(connectionFactory());
+    }
+
+    @Bean
     public JmsTransactionManager transactionManager() {
-        return new JmsTransactionManager(connectionFactory());
+        return new JmsTransactionManager(cachingConnectionFactory());
     }
 
     @Bean
     public JmsTemplate jmsTemplate() {
-        JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory());
+        JmsTemplate jmsTemplate = new JmsTemplate(cachingConnectionFactory());
+        jmsTemplate.setMessageConverter(new SwiftMTMessageConverter());
         jmsTemplate.setSessionTransacted(true);
         return jmsTemplate;
     }
-
-    @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory());
-        factory.setTransactionManager(transactionManager());
-        factory.setConcurrency("1-1");
-        factory.setSessionTransacted(true);
-        factory.setMessageConverter(customMessageConverter());
-        return factory;
-    }
-    
-    @Bean
-    public CustomMessageConverter customMessageConverter() {
-        return new CustomMessageConverter();
-    }    
 }
