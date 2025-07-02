@@ -4,11 +4,16 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import jakarta.jms.*;
 
 public class BatchMessageListenerContainer extends DefaultMessageListenerContainer {
-    public static final int DEFAULT_BATCH_SIZE = 1000;
+
+    int batchSize;
+
+    public BatchMessageListenerContainer(int batchSize) {
+        this.batchSize = batchSize;
+    }
 
     @Override
     protected Message receiveMessage(MessageConsumer consumer) throws JMSException {
-        BatchMessage batch = new BatchMessage(DEFAULT_BATCH_SIZE);
+        BatchMessage batch = new BatchMessage(batchSize);
         while (!batch.releaseAfterMessage(getMessageConverter().fromMessage(super.receiveMessage(consumer)))) ;
         return batch.isEmpty() ? null : batch;
     }

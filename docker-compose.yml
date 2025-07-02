@@ -55,7 +55,8 @@ services:
             - app.artemis.queue=RawData
             - spring.datasource.url=jdbc:postgresql://postgres-service:5432/postgres
             - spring.datasource.username=postgres
-            - spring.datasource.password=postgres            
+            - spring.datasource.password=postgres          
+            - app.artemis.batchsize=100              
 
     producer-service:
         build: ./producer
@@ -68,6 +69,6 @@ services:
             - app.artemis.username=artemis
             - app.artemis.password=artemis
             - app.artemis.queue=RawData
-            - app.artemis.batchsize=1000
+            - app.artemis.batchsize=100
 
 

@@ -9,22 +9,26 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.validation.annotation.Validated;
 
 import com.mycompany.app.converters.SwiftMTMessageConverter;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-@Configuration
+@Configuration()
 @ConfigurationProperties(prefix = "app.artemis")
 @ComponentScan
 @EnableJms
 @Getter @Setter
+@Validated
 public class ArtemisConfig {
-    private String url;
-    private String username;
-    private String password;
-    private String queue;
-    private int batchSize;
+    @NotNull String url;
+    @NotNull String username;
+    @NonNull String password;
+    @NotNull String queue;
+    @Positive int batchSize;
 
     @Bean
     ActiveMQConnectionFactory connectionFactory() {

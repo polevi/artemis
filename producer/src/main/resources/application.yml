@@ -6,5 +6,5 @@ app:
     url: tcp://localhost:6161
     username: artemis
     password: artemis
-    batchsize: 1000
+    batchsize: 100
     queue: RawData

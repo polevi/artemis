@@ -23,6 +23,7 @@ import com.mycompany.app.messages.SwiftMTMessage;
 @Service("consumer")
 @Slf4j
 public class Consumer implements ServiceRunner {
+
     @Autowired
     ShutdownHook shutdownHook;
 
@@ -43,22 +44,25 @@ public class Consumer implements ServiceRunner {
     @Retryable(value = RuntimeException.class, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 5000), listeners = {"retryListener"})
     public void run() throws Exception {
         log.info("Consumer started");
+
+        String queue = "...";
+        int batchSize = 100;
         
         try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {            
             context.start();
     
-            Queue recvQueue = context.createQueue(artemisProperties.getQueue());
+            Queue recvQueue = context.createQueue(queue);
             Queue replyQueue = context.createQueue("ack");
             JMSConsumer consumer = context.createConsumer(recvQueue);
             JMSProducer producer = context.createProducer();
 
-            log.info("Start receiving messages from address: {}", artemisProperties.getQueue());
+            log.info("Start receiving messages from address: {}", queue);
 
             while(!shutdownHook.isTerminating()) {
 
                 ArrayList<SwiftMTMessage> list = new ArrayList<SwiftMTMessage>();
 
-                for(int i = 0; i < artemisProperties.getBatchSize(); i++) {
+                for(int i = 0; i < batchSize; i++) {
 
                     Message message = consumer.receive();
                     if (message == null)

@@ -6,10 +6,10 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql://localhost:5432/postgres"
     username: "postgres"
-    password: "postgres"    
+    password: "postgres" 
 app:
   artemis:
     url: tcp://localhost:6161
     username: artemis
     password: artemis
-    batchsize: 1000
+    batchSize: 100

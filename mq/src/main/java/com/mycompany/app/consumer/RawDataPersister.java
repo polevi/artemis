@@ -20,7 +20,7 @@ public class RawDataPersister {
         this.rawDataRepository = rawDataRepository;
     }
 
-    @JmsListener(destination = "RawData", containerFactory = "batchJmsListenerContainerFactory")
+    @JmsListener(destination = "#{@artemisConfig.queue}", containerFactory = "batchJmsListenerContainerFactory")
     public void processSwiftMT(BatchMessage batch) {
         List<SwiftMTMessage> messages = batch.getMessages(SwiftMTMessage.class);
         rawDataRepository.insertBatch(messages);
