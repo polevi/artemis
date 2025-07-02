@@ -2,8 +2,10 @@ package com.mycompany.app.consumer;
 
 import java.util.List;
 
+import jakarta.jms.Session;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.app.dao.RawDataRepository;
 import com.mycompany.app.messages.SwiftMTMessage;
@@ -21,7 +23,8 @@ public class RawDataPersister {
     }
 
     @JmsListener(destination = "#{@artemisConfig.queue}", containerFactory = "batchJmsListenerContainerFactory")
-    public void processSwiftMT(BatchMessage batch) {
+    @Transactional
+    public void processSwiftMT(BatchMessage batch, Session session) {
         List<SwiftMTMessage> messages = batch.getMessages(SwiftMTMessage.class);
         rawDataRepository.insertBatch(messages);
         log.info("Inserted {} records", messages.size());

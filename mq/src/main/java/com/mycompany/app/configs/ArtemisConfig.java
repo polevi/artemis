@@ -9,6 +9,7 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.util.ErrorHandler;
 import org.springframework.validation.annotation.Validated;
 
 import com.mycompany.app.consumer.BatchJmsListenerContainerFactory;
@@ -17,6 +18,7 @@ import com.mycompany.app.converters.SwiftMTMessageConverter;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @ConfigurationProperties(prefix = "app.artemis")
@@ -24,6 +26,7 @@ import lombok.*;
 @EnableJms
 @Getter @Setter
 @Validated
+@Slf4j
 public class ArtemisConfig {
     @NotNull String url;
     @NotNull String username;
@@ -66,6 +69,14 @@ public class ArtemisConfig {
         factory.setSessionTransacted(true);
         factory.setMessageConverter(new SwiftMTMessageConverter());
         factory.setAutoStartup(true);
+        factory.setErrorHandler(jmsErrorHandler());
         return factory;        
     }        
+
+    @Bean
+    public ErrorHandler jmsErrorHandler() {
+        return e -> {
+            log.error("JMS Listener encountered an error: {}", e.getMessage(), e);
+        };
+    }
 }

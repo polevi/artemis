@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.app.messages.SwiftMTMessage;
 
@@ -24,7 +26,7 @@ public class RawDataRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-	//@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED)
     public int[] insertBatch(List<SwiftMTMessage> items) {
 		return this.jdbcTemplate.batchUpdate(
 				"insert into test.swift_mt (id, operdate, body) values(?, ?, ?) on conflict(id) do nothing",
