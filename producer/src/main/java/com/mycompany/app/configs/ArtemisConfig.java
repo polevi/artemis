@@ -9,6 +9,7 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.validation.annotation.Validated;
 
 import com.mycompany.app.converters.SwiftMTMessageConverter;
@@ -56,4 +57,9 @@ public class ArtemisConfig {
         jmsTemplate.setSessionTransacted(true);
         return jmsTemplate;
     }
+
+    @Bean
+    public MessageConverter messageConverter() {
+        return new SwiftMTMessageConverter();
+    }    
 }

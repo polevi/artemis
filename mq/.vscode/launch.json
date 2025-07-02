@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "com.mycompany.app.App",
             "projectName": "artemis",
-            "args": "--app.artemis.batchsize=200 --app.artemis.queue=RawData"
+            "args": "--app.artemis.batchsize=5000 --app.artemis.queue=RawData"
         }
     ]
 }
