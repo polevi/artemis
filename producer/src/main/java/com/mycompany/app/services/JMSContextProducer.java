@@ -39,21 +39,18 @@ public class JMSContextProducer implements IProducer {
             JMSProducer producer = context.createProducer();
 
             Random r = new Random();
-            int cnt = 0;
             long start = System.currentTimeMillis();
+            long cnt = 0;
             while(!Thread.interrupted()) {
                 int n = r.nextInt(congig.getBatchSize() - 1) + 1;
                 for (int i = 0; i < n; i++) {
-                    SwiftMTMessage msg = new SwiftMTMessage(n, LocalDate.now(), SwiftMTHelper.createMT103(n));
+                    long message_id = start + cnt;
+                    SwiftMTMessage msg = new SwiftMTMessage(message_id, LocalDate.now(), SwiftMTHelper.createMT103(message_id));
                     producer.send(queue, msg);
                     cnt++;
                 }
                 log.info("Batch of {} messages has been sent successfully. Average rate is {} rps", n, cnt * 1000 / (System.currentTimeMillis() - start));  
                 context.commit();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                }
             }
         }
     }

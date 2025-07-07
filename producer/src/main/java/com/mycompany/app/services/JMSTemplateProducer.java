@@ -27,15 +27,15 @@ public class JMSTemplateProducer implements IProducer {
     public void run() {
         log.info("Start producing messages to address: {}", congig.getQueue());
 
-        jmsTemplate.setDeliveryDelay(5000);
+        //jmsTemplate.setDeliveryDelay(5000);
 
         Random r = new Random();
-        int cnt = 0;
+        long cnt = 0;
         long start = System.currentTimeMillis();
         while(!Thread.interrupted()) {
             int n = r.nextInt(congig.getBatchSize() - 1) + 1;
             for (int i = 0; i < n; i++) {
-                SwiftMTMessage msg = new SwiftMTMessage(n, LocalDate.now(), SwiftMTHelper.createMT103(n));
+                SwiftMTMessage msg = new SwiftMTMessage(cnt, LocalDate.now(), SwiftMTHelper.createMT103(n));
                 jmsTemplate.convertAndSend(congig.getQueue(), msg);
                 cnt++;
             }

@@ -8,6 +8,7 @@
 
   <changeSet id="v-0.2" author="sergei.polevikov">
     <sqlFile dbms="postgresql" path="tables/swift_mt.sql" relativeToChangelogFile="true"/>
+    <sqlFile dbms="postgresql" path="sequences/edno.sql" relativeToChangelogFile="true"/>
     <rollback></rollback>
   </changeSet>
 </databaseChangeLog>

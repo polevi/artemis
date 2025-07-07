@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "com.mycompany.app.App",
             "projectName": "artemis",
-            "args": "--app.artemis.queue=MT --app.artemis.batchsize=1000"
+            "args": "--app.artemis.lan.batchsize=5000 --app.artemis.lan.queue=MT --app.artemis.prcs.queue=ED"
         }
     ]
 }

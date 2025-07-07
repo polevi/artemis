@@ -1,0 +1,21 @@
+spring:
+  main:
+    lazy-initialization: false
+  datasource:
+    type: "org.springframework.jdbc.datasource.SimpleDriverDataSource"
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "postgres" 
+app:
+  artemis:
+    lan:
+      url: tcp://localhost:6161
+      username: artemis
+      password: artemis
+      batchSize: 100
+    prcs:
+      url: tcp://localhost:6162
+      username: artemis
+      password: artemis
+      batchSize: 100

@@ -21,7 +21,7 @@ services:
       ports:
         - "80:80"
 
-    artemis-service:
+    artemis-service-lan:
         image:  apache/activemq-artemis:latest-alpine
         ports:
             - "6161:61616"
@@ -32,6 +32,18 @@ services:
             interval: 5s
             timeout: 5s
             retries: 5
+
+    artemis-service-prcs:
+        image:  apache/activemq-artemis:latest-alpine
+        ports:
+            - "6162:61616"
+            - "8162:8161"
+        healthcheck:
+            test: ["CMD", "./bin/artemis", "check", "node", "--user=artemis", "--password=artemis"]
+            start_period: 10s
+            interval: 5s
+            timeout: 5s
+            retries: 5            
 
     db-service:
         build: ../db

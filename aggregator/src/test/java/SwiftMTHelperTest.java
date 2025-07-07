@@ -8,11 +8,13 @@ import java.util.Random;
 
 public class SwiftMTHelperTest {
 
+    SwiftMTHelper helper = new SwiftMTHelper();
+
     @Test
     public void testParseMessageId() {
         Random random = new Random();
-        long id = random.nextInt(100);
-        long result = SwiftMTHelper.parseMessageId(SwiftMTHelper.createMT103(id));
+        int id = random.nextInt(100);
+        int result = SwiftMTHelper.parseMessageId(SwiftMTHelper.createMT103(id));
         assertEquals(id, result);
     }
 }
