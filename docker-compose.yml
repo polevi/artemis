@@ -44,31 +44,39 @@ services:
             retries: 5
 
     consumer-service:
-        build: ./mq
+        build: ./aggregator
         depends_on:
             artemis-service:
                 condition: service_healthy
+            postgres-service:
+                condition: service_healthy                
         environment:
-            - app.artemis.url=tcp://artemis-service:61616
-            - app.artemis.username=artemis
-            - app.artemis.password=artemis
-            - app.artemis.queue=RawData
+            - app.artemis.lan.url=tcp://artemis-service:61616
+            - app.artemis.lan.username=artemis
+            - app.artemis.lan.password=artemis
+            - app.artemis.lan.queue=MT
+            - app.artemis.lan.batchsize=5000
+            - app.artemis.prcs.url=tcp://artemis-service:61616
+            - app.artemis.prcs.username=artemis
+            - app.artemis.prcs.password=artemis
+            - app.artemis.prcs.queue=ED            
             - spring.datasource.url=jdbc:postgresql://postgres-service:5432/postgres
             - spring.datasource.username=postgres
             - spring.datasource.password=postgres          
-            - app.artemis.batchsize=100              
 
     producer-service:
         build: ./producer
         depends_on:
             artemis-service:
                 condition: service_healthy
+            postgres-service:
+                condition: service_healthy                
         environment:
             - app.serviceToStart=producer
             - app.artemis.url=tcp://artemis-service:61616
             - app.artemis.username=artemis
             - app.artemis.password=artemis
-            - app.artemis.queue=RawData
-            - app.artemis.batchsize=100
+            - app.artemis.queue=MT
+            - app.artemis.batchsize=1000
 
 
