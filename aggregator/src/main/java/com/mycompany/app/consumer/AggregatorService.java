@@ -22,11 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AggregatorService {
 
-    AggregatorRepository rawDataRepository;
+    AggregatorRepository aggregatorRepository;
     JmsTemplate prcsJmsTemplate;
 
-    public AggregatorService(AggregatorRepository rawDataRepository, @Qualifier("prcsJmsTemplate") JmsTemplate prcsJmsTemplate) {
-        this.rawDataRepository = rawDataRepository;
+    public AggregatorService(AggregatorRepository aggregatorRepository, @Qualifier("prcsJmsTemplate") JmsTemplate prcsJmsTemplate) {
+        this.aggregatorRepository = aggregatorRepository;
         this.prcsJmsTemplate = prcsJmsTemplate;
     }
 
@@ -36,12 +36,12 @@ public class AggregatorService {
     public void processSwiftMT(BatchMessage batch, Session session) {
         List<SwiftMTMessage> messages = batch.getMessages(SwiftMTMessage.class);
 
-        int[] batchResult = rawDataRepository.insertBatch(messages);
+        int[] batchResult = aggregatorRepository.insertBatch(messages);
         List<SwiftMTMessage> ignoredMessages = processIgnored(messages, batchResult);
         log.info("Inserted {}, skipped {} records", messages.size(), ignoredMessages.size());
 
         if (messages.size() > 0) {
-            Long edno = rawDataRepository.getNextEdNo();
+            Long edno = aggregatorRepository.getNextEdNo();
             log.info("Generated edno: {}", edno);
             prcsJmsTemplate.send("ED", messageCreator -> {
                 return messageCreator.createTextMessage(SwiftMTHelper.createED503(messages, edno));
