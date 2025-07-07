@@ -31,7 +31,7 @@ services:
             - spring.datasource.username=postgres
             - spring.datasource.password=postgres
 
-    artemis-service:
+    artemis-service-lan:
         image:  apache/activemq-artemis:latest-alpine
         ports:
             - "6161:61616"
@@ -43,20 +43,34 @@ services:
             timeout: 5s
             retries: 5
 
+    artemis-service-prcs:
+        image:  apache/activemq-artemis:latest-alpine
+        ports:
+            - "6162:61616"
+            - "8162:8161"
+        healthcheck:
+            test: ["CMD", "./bin/artemis", "check", "node", "--user=artemis", "--password=artemis"]
+            start_period: 10s
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
     consumer-service:
         build: ./aggregator
         depends_on:
-            artemis-service:
+            artemis-service-lan:
+                condition: service_healthy
+            artemis-service-prcs:
                 condition: service_healthy
             postgres-service:
                 condition: service_healthy                
         environment:
-            - app.artemis.lan.url=tcp://artemis-service:61616
+            - app.artemis.lan.url=tcp://artemis-service-lan:61616
             - app.artemis.lan.username=artemis
             - app.artemis.lan.password=artemis
             - app.artemis.lan.queue=MT
             - app.artemis.lan.batchsize=5000
-            - app.artemis.prcs.url=tcp://artemis-service:61616
+            - app.artemis.prcs.url=tcp://artemis-service-prcs:61616
             - app.artemis.prcs.username=artemis
             - app.artemis.prcs.password=artemis
             - app.artemis.prcs.queue=ED            
@@ -67,13 +81,13 @@ services:
     producer-service:
         build: ./producer
         depends_on:
-            artemis-service:
+            artemis-service-lan:
                 condition: service_healthy
             postgres-service:
                 condition: service_healthy                
         environment:
             - app.serviceToStart=producer
-            - app.artemis.url=tcp://artemis-service:61616
+            - app.artemis.url=tcp://artemis-service-lan:61616
             - app.artemis.username=artemis
             - app.artemis.password=artemis
             - app.artemis.queue=MT
