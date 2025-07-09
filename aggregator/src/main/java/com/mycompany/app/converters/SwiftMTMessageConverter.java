@@ -23,6 +23,12 @@ public class SwiftMTMessageConverter implements MessageConverter{
 
     @Override
     public Object fromMessage(Message message) throws JMSException, MessageConversionException {
-        return message != null ? message.getBody(SwiftMTMessage.class) : null;
+        if (message != null) {
+            SwiftMTMessage m = message.getBody(SwiftMTMessage.class);
+            m.setMessage(message);
+            return m;
+        } else {
+            return null;
+        }
     }
 }

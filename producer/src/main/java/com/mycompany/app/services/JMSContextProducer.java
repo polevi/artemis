@@ -26,31 +26,40 @@ public class JMSContextProducer implements IProducer {
     ActiveMQConnectionFactory artemisConnectionFactory;  
 
     @Autowired
-    ArtemisConfig congig;
+    ArtemisConfig config;
 
     @Override
     public void run() {
-        log.info("Start producing messages to address: {}", congig.getQueue());
+        log.info("Start producing messages to address: {}", config.getQueue());
 
         try (JMSContext context = artemisConnectionFactory.createContext(JMSContext.SESSION_TRANSACTED)) {            
             context.start();
 
-            Queue queue = context.createQueue(congig.getQueue());
+            Queue queue = context.createQueue(config.getQueue());
+            Queue replyQueue = context.createQueue(config.getQueue() + ".reply");
+
             JMSProducer producer = context.createProducer();
+            producer.setJMSReplyTo(replyQueue);
 
             Random r = new Random();
             long start = System.currentTimeMillis();
             long cnt = 0;
             while(!Thread.interrupted()) {
-                int n = r.nextInt(congig.getBatchSize() - 1) + 1;
+                int n = r.nextInt(config.getBatchSize() - 1) + 1;
                 for (int i = 0; i < n; i++) {
                     long message_id = start + cnt;
-                    SwiftMTMessage msg = new SwiftMTMessage(message_id, LocalDate.now(), SwiftMTHelper.createMT103(message_id));
+                    SwiftMTMessage msg = new SwiftMTMessage(message_id, LocalDate.now(), SwiftMTHelper.createMT103(message_id));                    
                     producer.send(queue, msg);
                     cnt++;
                 }
                 log.info("Batch of {} messages hava been sent successfully. Average rate is {} rps", n, cnt * 1000 / (System.currentTimeMillis() - start));  
                 context.commit();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }
