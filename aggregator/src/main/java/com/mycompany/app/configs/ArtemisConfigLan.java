@@ -12,6 +12,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.util.ErrorHandler;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.app.consumer.BatchJmsListenerContainerFactory;
 import com.mycompany.app.converters.SwiftMTMessageConverter;
 
@@ -61,13 +62,13 @@ public class ArtemisConfigLan {
     }
 
     @Bean
-    public BatchJmsListenerContainerFactory lanBatchJmsListenerContainerFactory() {
+    public BatchJmsListenerContainerFactory lanBatchJmsListenerContainerFactory(ObjectMapper mapper) {
         BatchJmsListenerContainerFactory factory = new BatchJmsListenerContainerFactory(batchSize);
         factory.setConnectionFactory(lanCachingConnectionFactory());
         factory.setTransactionManager(lanTransactionManager());
         factory.setConcurrency("2-2");
         factory.setSessionTransacted(true);
-        factory.setMessageConverter(new SwiftMTMessageConverter());
+        factory.setMessageConverter(new SwiftMTMessageConverter(mapper));
         factory.setAutoStartup(true);
         factory.setErrorHandler(lanJmsErrorHandler());
         return factory;        

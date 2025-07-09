@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class SwiftMTMessage implements Serializable  {
 
-    private static final long serialVersionUID = 1;
-
     private Long id;
     private LocalDate operdate;
     private String body;
