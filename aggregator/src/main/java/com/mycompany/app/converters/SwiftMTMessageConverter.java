@@ -1,6 +1,5 @@
 package com.mycompany.app.converters;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.springframework.jms.support.converter.MessageConversionException;
@@ -43,9 +42,9 @@ public class SwiftMTMessageConverter implements MessageConverter{
     }
 
     SwiftMTMessage deserialize(byte[] data) {
-        try(ByteArrayInputStream in = new ByteArrayInputStream(data)) {
-            return mapper.readValue(in, SwiftMTMessage.class);
-        } catch(IOException e) {
+        try {
+            return mapper.readValue(data, SwiftMTMessage.class);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }    

@@ -1,6 +1,5 @@
 package com.mycompany.app.services;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.app.configs.ArtemisConfig;
 import com.mycompany.app.helpers.SwiftMTHelper;
@@ -54,7 +54,7 @@ public class JMSContextProducer implements IProducer {
                 for (int i = 0; i < n; i++) {
                     long message_id = start + cnt;
                     SwiftMTMessage msg = new SwiftMTMessage(message_id, LocalDate.now(), SwiftMTHelper.createMT103(message_id));    
-                    producer.send(queue, serialize(msg));
+                    producer.send(queue, mapper.writeValueAsBytes(msg));
                     cnt++;
                 }
                 log.info("Batch of {} messages hava been sent successfully. Average rate is {} rps", n, cnt * 1000 / (System.currentTimeMillis() - start));  
@@ -66,17 +66,8 @@ public class JMSContextProducer implements IProducer {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    byte[] serialize(Object obj) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            mapper.writeValue(out, obj);
-            return out.toByteArray();
-        } catch(Exception e) {
+        } catch(JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
