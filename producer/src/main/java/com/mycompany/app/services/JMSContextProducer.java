@@ -1,7 +1,6 @@
 package com.mycompany.app.services;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Random;
 
