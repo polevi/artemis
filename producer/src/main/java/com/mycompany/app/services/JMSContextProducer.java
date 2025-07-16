@@ -45,6 +45,7 @@ public class JMSContextProducer implements IProducer {
 
             JMSProducer producer = context.createProducer();
             producer.setJMSReplyTo(replyQueue);
+            producer.setProperty("CamelFileName", "blabla_503.xml");
 
             Random r = new Random();
             long start = System.currentTimeMillis();

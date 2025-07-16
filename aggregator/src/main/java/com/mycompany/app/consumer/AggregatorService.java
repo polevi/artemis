@@ -33,7 +33,7 @@ public class AggregatorService {
         this.prcsJmsTemplate = prcsJmsTemplate;
     }
 
-    @JmsListener(destination = "#{@artemisConfigLan.queue}", containerFactory = "lanBatchJmsListenerContainerFactory")
+    @JmsListener(destination = "#{@artemisConfigLan.queue}", selector = "#{@artemisConfigLan.selector}", containerFactory = "lanBatchJmsListenerContainerFactory")
     @Retryable(maxAttempts = 1, backoff = @Backoff(delay = 1000))
     @Transactional
     public void processSwiftMT(BatchMessage batch, Session session) {

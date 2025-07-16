@@ -33,6 +33,7 @@ public class ArtemisConfigLan {
     @NotNull String username;
     @NonNull String password;
     @NotNull String queue;
+    String selector;
     @Positive int batchSize;
 
     @Bean

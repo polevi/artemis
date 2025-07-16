@@ -14,6 +14,7 @@ app:
       username: artemis
       password: artemis
       batchSize: 100
+      selector: CamelFileName LIKE '%503.xml'
     prcs:
       url: tcp://localhost:6162
       username: artemis
